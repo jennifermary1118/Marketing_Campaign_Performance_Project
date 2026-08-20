@@ -1,12 +1,30 @@
 import streamlit as st
 import pandas as pd
 import joblib
+import requests
+import os
 
-# Load Regression Model
+# GitHub Release model URLs
+REVENUE_MODEL_URL = "https://github.com/jennifermary1118/Marketing_Campaign_Performance_Project/releases/download/v1.0/revenue_prediction_model.pkl"
+PROFIT_MODEL_URL = "https://github.com/jennifermary1118/Marketing_Campaign_Performance_Project/releases/download/v1.0/profit_prediction_model.pkl"
+
+# Download model if it is not already available
+def download_file(url, filename):
+    if not os.path.exists(filename):
+        with requests.get(url, stream=True) as r:
+            r.raise_for_status()
+            with open(filename, "wb") as f:
+                for chunk in r.iter_content(chunk_size=1024 * 1024):
+                    if chunk:
+                        f.write(chunk)
+
+download_file(REVENUE_MODEL_URL, "revenue_prediction_model.pkl")
+download_file(PROFIT_MODEL_URL, "profit_prediction_model.pkl")
+
+# Load models
 revenue_model = joblib.load("revenue_prediction_model.pkl")
 revenue_scaler = joblib.load("revenue_scaler.pkl")
 
-# Load Classification Model
 profit_model = joblib.load("profit_prediction_model.pkl")
 classification_scaler = joblib.load("classification_scaler.pkl")
 
